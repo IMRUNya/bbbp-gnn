@@ -13,11 +13,20 @@
 \input{Text/0-frontmatter}
 \input{Text/1-Introduction}
 \input{Text/0.1-Big_Figures}
-\input{Text/2-Theory}
-\input{Text/3-Method}
-\input{Text/4-Results}
-\input{Text/5-Discussion}
-\input{Text/6-Conclusion}
+
+% Sections follow the assignment's parts, so they are lettered rather
+% than numbered. \appendix resets this to the usual appendix lettering.
+\renewcommand{\thesection}{Part~\Alph{section}}
+\renewcommand{\thesubsection}{\Alph{section}.\arabic{subsection}}
+
+\input{Text/A-Dataset}
+\input{Text/B-Molecules}
+\input{Text/C-Graphs}
+\input{Text/D-Splits}
+\input{Text/E-Baseline}
+\input{Text/F-Network}
+\input{Text/G-Evaluation}
+\input{Text/Z-Conclusion}
 
 \clearpage                              % Page limit: body ends here.
 \printbibliography

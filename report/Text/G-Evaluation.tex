@@ -1,0 +1,49 @@
+\section{Final evaluation and error analysis}
+\label{part:eval}
+
+\subsection{Test scores}
+
+Each test set was scored once, with every setting already frozen. \Cref{tab:results} gives the numbers, \cref{fig:roc-pr} the ROC and precision--recall curves and \cref{fig:confusion} the confusion matrices.
+
+\begin{table}[htb]
+    \centering
+    \caption{Test-set scores, one evaluation per sealed test set. Network columns are mean $\pm$ standard deviation over three seeds; thresholds were frozen on validation data beforehand. Better of the two models per split and row in bold. Answering ``crosses'' every time gives ROC-AUC 0.500 at accuracy 0.763 and $F_1$ 0.865 (random), 0.753 and 0.859 (scaffold).}
+    \label{tab:results}
+    \scriptsize
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{@{}lcc@{\hspace{0.9em}}cc@{}}
+        \toprule
+        & \multicolumn{2}{c}{Random split} & \multicolumn{2}{c}{Scaffold split} \\
+        \cmidrule(r){2-3} \cmidrule(l){4-5}
+        & GINE & FP+LR & GINE & FP+LR \\
+        \midrule
+        Threshold   & $0.424 \pm 0.213$          & $0.534$          & $0.748 \pm 0.248$          & $0.650$          \\
+        ROC-AUC     & $\mathbf{0.912 \pm 0.008}$ & $0.892$          & $\mathbf{0.885 \pm 0.025}$ & $0.876$          \\
+        PR-AUC      & $\mathbf{0.967 \pm 0.005}$ & $0.955$          & $\mathbf{0.955 \pm 0.013}$ & $0.949$          \\
+        Accuracy    & $0.859 \pm 0.029$          & $\mathbf{0.875}$ & $0.786 \pm 0.014$          & $\mathbf{0.821}$ \\
+        Sensitivity & $0.881 \pm 0.052$          & $\mathbf{0.898}$ & $0.779 \pm 0.034$          & $\mathbf{0.834}$ \\
+        Specificity & $0.786 \pm 0.052$          & $\mathbf{0.800}$ & $\mathbf{0.808 \pm 0.060}$ & $0.781$          \\
+        $F_1$       & $0.904 \pm 0.022$          & $\mathbf{0.916}$ & $0.846 \pm 0.014$          & $\mathbf{0.875}$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The result splits cleanly in two. The network wins both measures that only care about the \emph{order} of the predictions, ROC-AUC and PR-AUC, on both splits. The fingerprint model wins every measure that needs a yes/no decision --- accuracy, sensitivity and $F_1$ --- also on both splits. The two statements are the same fact seen from different sides: the network sorts the molecules better but cuts them in the wrong place. Its chosen thresholds, $0.424 \pm 0.213$ and $0.748 \pm 0.248$, vary so much between seeds that the three runs are effectively using different cutoffs, while the heavily regularised linear model produces well-behaved probabilities and converts a lower ROC-AUC into a higher $F_1$.
+
+So is the network better? Only weakly, and only at ranking. On the scaffold split the gap is 0.009 ROC-AUC while the network's own spread across seeds is 0.025, which is nearly three times larger --- the two models simply cannot be told apart there. On the random split the gap of 0.020 is about 2.5 times the seed spread, which is suggestive but rests on three runs and a single split seed. This is not an odd result: a fingerprint matching a graph network on BBBP has been reported repeatedly \parencite{Chemprop}. With only 1375 training molecules there is little for \num{67588} parameters to discover beyond which fragments are present.
+
+Both models also lose ground when scaffolds are held apart, and the network loses slightly more, which fits the idea that it was partly recognising familiar scaffolds. The scaffold numbers are the ones to quote for a genuinely new molecule; the random ones are an optimistic ceiling inflated by those 238 shared scaffolds.
+
+It is worth comparing all of this to the laziest possible model. Answering ``crosses'' for everything scores 0.763 accuracy and 0.865 $F_1$ on the random test set. The fingerprint model's 0.916 $F_1$ is a genuine improvement on that, but a modest one, and any report leading with accuracy here would mostly be reporting the base rate.
+
+\subsection{Where the network goes wrong}
+
+The run with the middle test ROC-AUC on the scaffold split --- neither the best nor the worst --- makes 68 mistakes on 296 test molecules: 12 false positives and 56 false negatives, the lopsidedness following from its high threshold of 0.832.
+
+To see whether the mistakes make sense, each test molecule was compared to its most similar training molecule using Tanimoto similarity on the fingerprints, which runs from 0 (nothing in common) to 1 (identical fragments); above 0.7 is the usual rule of thumb for calling two molecules similar. The median across the scaffold test set is only \textbf{0.40}, so the model is generally being asked about molecules unlike anything it was trained on. Its four most confident mistakes, listed in \cref{tab:errors} and drawn in \cref{fig:errors}, all sit at or below that median, between 0.20 and 0.38.
+
+Three of the four copied their nearest neighbour's label. Both false positives latched onto a shared fragment: one is a molecule containing two glutarimide groups joined by a polar linker, scored 0.994, whose closest training molecule is a single glutarimide labelled as crossing. Doubling the group is exactly the change that makes a molecule too large and too polar to get through, but the model saw the familiar fragment and answered accordingly. The third mistake is the mirror image, a small chromone acid matched to a double-sized relative labelled as not crossing.
+
+The fourth is more interesting, because similarity does not explain it at all. A small cyclic acetal, truly label 1, was scored 0.005, even though its nearest training molecule is labelled 1 and predicted 1.000. The cause is its size: with only 7 heavy atoms it is far below the typical 23, and three of those seven are oxygens. Since \cref{eq:pool} averages over atoms, there is almost nothing to dilute that oxygen signal, and the model reads the molecule as too polar to cross.
+
+The practical lesson is that low similarity does not make the model cautious. The macrocycle with a similarity of only 0.220 to anything in training was still given a probability of 0.989. The predicted probability therefore carries no warning about whether a molecule is one the model is entitled to judge. A simple nearest-neighbour distance check alongside the model would have flagged all four of these cases.

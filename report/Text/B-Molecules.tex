@@ -1,0 +1,8 @@
+\section{Looking at the molecules}
+\label{part:mol}
+
+Before modelling, it helps to see what the data actually contains. \Cref{fig:molecules} in \ref{sec:representation} draws six molecules with their SMILES strings and labels, three from each class, and \cref{fig:distributions} shows how large the molecules are.
+
+The size statistics are in the right-hand half of \cref{tab:audit}. A typical molecule has 23 heavy atoms and 25 bonds, half of them fall between 18 and 29 atoms, and the largest has 132. Both distributions are single-peaked with a long tail to the right, which is what drug-like compounds normally look like. Bond count tracks atom count closely, as it must for connected structures.
+
+Two things from this matter later. First, these are small molecules, so a model that averages over their atoms has very few values to average when a molecule sits at the low end of the range --- this turns out to explain one of the network's worst mistakes (\ref{part:eval}). Second, nothing here is unusual enough to need special handling, so no molecules were filtered out on the basis of size.

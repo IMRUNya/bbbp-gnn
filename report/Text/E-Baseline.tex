@@ -1,0 +1,12 @@
+\section{The fingerprint baseline}
+\label{part:base}
+
+The baseline needs to be something simple that a graph network ought to beat. An ECFP4 fingerprint \parencite{ECFP} was used: for every atom it looks at the ring of neighbours within two bonds, hashes that small fragment to a number, and switches on the matching bit in a 2048-bit vector. The result records which fragments a molecule contains and nothing else --- not how they are arranged, and not anything learned from the task. That is exactly what makes it a fair control: it shows how much of the problem can be solved by fragment lists alone.
+
+On these 1965 molecules the fingerprints switch on 43 bits on average, and only 4 of the 2048 bits are never used, so the vector length is not wasted.
+
+The classifier is logistic regression. Because three quarters of the molecules are positive, each class is weighted by $w_k = n / 2n_k$, computed on the training set only, so that the smaller class is not ignored. Weighting was chosen over resampling: throwing away negatives would cost roughly 700 of the 1375 training molecules, and duplicating positives adds no new structures.
+
+Two settings were chosen on the validation set, never on the test set. The regularisation strength $C$ was picked from $\{0.01, 0.1, 1, 10, 100\}$ by validation ROC-AUC, which does not depend on a decision threshold; $C = 0.1$ won on both splits, scoring 0.9024 and 0.8875, and larger values got steadily worse, down to 0.8863 and 0.8576 at $C = 100$. Sparse yes/no features clearly need strong regularisation.
+
+The decision threshold was then chosen separately, as the point that maximises Youden's index, sensitivity $+$ specificity $-1$ \parencite{Youden}, which balances catching both classes instead of leaving the cutoff at the arbitrary 0.5. The chosen thresholds differ between the splits, 0.534 and 0.650, because the predicted probabilities spread out differently once the validation molecules share no scaffold with training. Both were frozen before any test molecule was scored.

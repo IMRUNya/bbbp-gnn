@@ -1,0 +1,9 @@
+\section*{Conclusion}
+
+Of the 2039 molecules BBBP loads, 60 turn out to be duplicates once written in canonical form, even though all 2039 raw strings are different. Ten of those carry both labels at once and were removed, leaving 1965 molecules to work with.
+
+The graph network reached a test ROC-AUC of $0.912 \pm 0.008$ on the random split and $0.885 \pm 0.025$ on the scaffold split; the fingerprint baseline reached 0.892 and 0.876. The baseline was better on accuracy and $F_1$ on both splits, because the network ranks molecules well but places its cutoff badly. On the scaffold split the 0.009 gap between the two models is smaller than the network's own variation of 0.025 across seeds, so no honest ranking of the two can be claimed there. The choice of split mattered far more than the choice of model or seed, moving validation ROC-AUC by 0.0354 against a seed-to-seed spread of about 0.0025.
+
+Four limits should be kept in mind. The labels are not ground truth: ten molecules in a single file carry both, every row from 1000 onwards is positive, and the underlying measurement is continuous rather than yes/no. The dataset is small, and with 296 scaffold-test molecules the confidence interval on ROC-AUC is roughly $\pm 0.04$ --- wider than the gap being discussed. Nothing was validated outside this one file. And the model does not abstain: it answers confidently in regions where it has almost no data, as the error analysis shows.
+
+Finally, the model has learned which fragments tend to come with which label. It knows nothing about diffusion, transport proteins, efflux pumps or dose, and it cannot tell a molecule that never enters the brain from one that enters and is pumped straight back out. A high score means a molecule resembles the compounds this file labelled as crossing --- nothing more, and certainly not that any feature \emph{causes} permeability.

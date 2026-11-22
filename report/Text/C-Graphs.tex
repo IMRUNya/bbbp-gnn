@@ -1,0 +1,15 @@
+\section{Turning a molecule into a graph}
+\label{part:graph}
+
+A molecule becomes a graph by treating each heavy atom as a node and each chemical bond as an edge. Hydrogens are not given their own nodes; the number of hydrogens attached to an atom is stored as one of that atom's attributes instead, which keeps the graphs small without losing information.
+
+Each atom carries $9$ attributes and each bond carries $3$. The edges are stored as a list of pairs in coordinate (COO) form, and each bond is listed twice, once in each direction, so that information can travel both ways along it. This is why the first molecule in the dataset, which has 20 atoms and 20 bonds, has an edge list of length 40. \Cref{fig:graph-view} in \ref{sec:representation} puts the chemical drawing and the graph side by side for aspirin; the two match exactly, 13 atoms becoming 13 nodes and 13 bonds becoming 13 edges.
+
+All twelve attributes are \emph{category codes}, not measurements. A code is simply a position in a list: the formal-charge list starts at $-5$, so code 5 means a charge of zero, and code 3 in the hybridisation list means SP2. Feeding such a code to a model as a number would claim that SP2 is three times whatever code 1 stands for, which is meaningless. Each attribute column is therefore given its own lookup table of trainable vectors, and the nine vectors an atom collects are added together to form its starting state:
+\begin{equation}
+    h_i^{(0)} = \sum_{c=1}^{9} W_c\!\left[X_{ic}\right], \qquad h_i^{(0)} \in \mathbb{R}^{d}.
+    \label{eq:atom-encoder}
+\end{equation}
+Bonds are encoded the same way. This is equivalent to one-hot encoding followed by a linear layer, but much narrower: with $d = 64$ it uses \num{11328} values for atoms and \num{1920} for bonds, where one-hot encoding would hand the first layer 177 atom columns and 30 bond columns. It is also more economical because most of each vocabulary is never used --- only 13 of 119 element slots appear in this dataset, 4 of 12 charge slots, 4 of 8 hybridisation states and 4 of 22 bond types. The full decoding is in \ref{sec:vocab}.
+
+Graphs of different sizes are trained on together by joining a batch into one large graph whose pieces are not connected to each other. The attribute matrices are stacked, each graph's edge indices are shifted by the number of atoms already placed, and a separate vector records which graph each atom belongs to. Batching 32 molecules gives 778 atoms, 1664 directed edges and 32 labels --- one label per molecule, not per atom. Checks confirmed the batching is correct: the second graph starts exactly where the first one ends, and iterating the whole dataset recovers all 2039 graphs and \num{49068} atoms with no graph empty and no label missing.
