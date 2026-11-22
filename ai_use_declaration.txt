@@ -1,0 +1,72 @@
+AI USE DECLARATION
+ENG 2440 Medical Imaging & AI in Healthcare - Assignment 3
+Imran Turganov
+
+REVIEW THIS FILE AND EDIT IT TO MATCH YOUR OWN ACCOUNT BEFORE SUBMITTING.
+You sign this declaration, so it must be your description of what happened.
+Delete this notice once you have checked it.
+
+--------------------------------------------------------------------------
+TOOL USED
+--------------------------------------------------------------------------
+Claude (Anthropic), used through Claude Code.
+No other generative-AI or large-language-model tool was used.
+
+--------------------------------------------------------------------------
+PURPOSES
+--------------------------------------------------------------------------
+1. Conceptual explanation
+   Asked for explanations of the topic and of the assignment tasks: what the
+   blood-brain barrier is and why permeability prediction matters, how a
+   molecule is represented as a graph, what the categorical atom and bond
+   feature columns mean, how message passing and graph-level pooling work,
+   what a Bemis-Murcko scaffold is and why a scaffold split differs from a
+   random one, and what an ECFP fingerprint encodes.
+
+2. Background reading
+   Asked for additional articles and sources to read around the task,
+   including the MoleculeNet and Martins et al. dataset papers, the
+   Bemis-Murcko scaffold paper, the ECFP paper, the GIN and GINE papers and
+   the Chemprop evaluation of learned versus fixed molecular representations.
+   These became the reference list of the report.
+
+3. Implementation of the notebook
+   Used to write and debug the Python in main.ipynb: the dataset audit and
+   canonical-SMILES de-duplication, the random and scaffold splits, the
+   fingerprint baseline, the GINEConv model and training loop, the evaluation
+   metrics and the similarity-based error analysis, together with the figures
+   those cells produce. Affects Parts A-G of the notebook.
+
+4. Report structure and drafting
+   Used to decide how to structure the report (sections matching Parts A-G of
+   the brief, which material belongs in the body and which in the appendix),
+   to draft and shorten the text to the six-page limit, and to build the
+   LaTeX source, tables and figure layout. Affects the whole of report/main.pdf.
+
+5. Evaluating and reviewing
+   Used to review results and interpretations: whether the difference between
+   the two models is larger than the seed-to-seed variation, how to read the
+   training curves, and what the error and similarity analysis does and does
+   not support.
+
+--------------------------------------------------------------------------
+INTERACTION RECORD
+--------------------------------------------------------------------------
+Work was done in an interactive Claude Code session rather than through
+single prompts. Representative requests:
+  - "explain how a molecule becomes a graph in PyTorch Geometric and what
+     each feature column means"
+  - "which papers should I cite for scaffold splitting and for ECFP"
+  - "implement the scaffold split so molecules with the same scaffold stay
+     in one subset"
+  - "write the report following Parts A-G of the brief, 6 pages maximum"
+  - "is the difference between the two models larger than the seed variation"
+
+No transcript link is available for this session.
+
+--------------------------------------------------------------------------
+RESPONSIBILITY
+--------------------------------------------------------------------------
+I have read the notebook and the report, I have checked the reported numbers
+against the notebook outputs, and I am able to explain every design decision,
+result and figure in the submission.

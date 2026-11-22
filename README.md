@@ -1,12 +1,14 @@
 # Molecular Property Prediction with Graph Neural Networks — BBBP
 
+ENG 2440 Medical Imaging & AI in Healthcare, Assignment 3.
+
 Blood–brain barrier penetration on the MoleculeNet **BBBP** dataset: a dataset audit, a
 Bemis–Murcko scaffold split against a stratified random split, an ECFP4 + logistic-regression
 baseline, a three-layer edge-aware graph isomorphism network (`GINEConv`), and an error analysis
 of the network's most confident mistakes against nearest-neighbour similarity.
 
 The write-up is **[`report/main.pdf`](report/main.pdf)**; the notebook holds the code and its
-outputs.
+outputs. Its sections follow Parts A–G of the assignment brief, one section per part.
 
 ## Contents
 
@@ -14,8 +16,10 @@ outputs.
 | --- | --- |
 | `main.ipynb` | The full pipeline, executed top to bottom with all outputs visible. |
 | `requirements.txt` | Pinned versions of everything the notebook imports. |
-| `report/` | LaTeX sources (`main.tex`, `Text/`, `Images/`, `Bibliography/`) and the compiled `main.pdf`. |
-| `report/Images/` | The figures, exported from the notebook's plots. |
+| `ai_use_declaration.txt` | Declaration of generative-AI use, per Section 6 of the brief. |
+| `report/main.tex` | The report source: one self-contained LaTeX file. |
+| `report/Images/` | The seven figures, exported from the notebook's plots. |
+| `report/main.pdf` | The compiled report: 6 body pages, references, 1 appendix page. |
 
 There are no supporting `.py` files: the notebook is self-contained.
 
@@ -53,21 +57,23 @@ report exactly.
 
 ## Notebook layout
 
+Notebook parts, report sections and the brief's required tasks all use the same letters.
+
 | Part | Contents |
 | --- | --- |
-| A | Load BBBP, audit records, labels, parse failures and duplicates under canonical SMILES. |
-| B | Structures, atom/bond count distributions, graph-versus-depiction comparison. |
-| C | Attribute vocabularies, embedding encoders, batching and integrity checks. |
-| D | Stratified random split and Bemis–Murcko scaffold split, with overlap checks. |
-| E | ECFP4 fingerprints and the logistic-regression baseline. |
-| F | The `GINEConv` network: training, early stopping, three seeds per split. |
-| G | Test evaluation and the error/similarity analysis. |
+| A | Load BBBP; audit size, labels, parse failures and duplicates under canonical SMILES; six example structures; atom/bond count distributions; one graph's shapes. |
+| B | Graph representation: feature columns and their meanings, embedding encoders, the depiction-versus-graph comparison, batching and integrity checks. |
+| C | Stratified random split and Bemis–Murcko scaffold split, with coverage and overlap checks. |
+| D | ECFP4 fingerprints and the logistic-regression baseline. |
+| E | The `GINEConv` network: architecture, training, early stopping, three seeds per split. |
+| F | Test evaluation: metrics, ROC and PR curves, confusion matrices. |
+| G | Error and similarity analysis on the scaffold-split test set. |
 
 ## Rebuilding the report
 
 ```bash
-cd report && tectonic -Z shell-escape main.tex
+cd report && tectonic main.tex
 ```
 
-It also compiles unchanged on Overleaf (upload the `report/` folder; the bibliography backend is
-`bibtex`).
+`report/` is a single `main.tex` plus `Images/`, with no external bibliography pass, so it also
+compiles unchanged on Overleaf — upload the folder and press recompile.
