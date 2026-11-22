@@ -16,7 +16,6 @@ outputs. Its sections follow Parts A–G of the assignment brief, one section pe
 | --- | --- |
 | `main.ipynb` | The full pipeline, executed top to bottom with all outputs visible. |
 | `requirements.txt` | Pinned versions of everything the notebook imports. |
-| `ai_use_declaration.txt` | Declaration of generative-AI use, per Section 6 of the brief. |
 | `report/main.tex` | The report source: one self-contained LaTeX file. |
 | `report/Images/` | The seven figures, exported from the notebook's plots. |
 | `report/main.pdf` | The compiled report: 6 body pages, references, 1 appendix page. |
