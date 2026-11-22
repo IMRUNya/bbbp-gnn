@@ -1,0 +1,30 @@
+\newlength{\bibsep}
+\documentclass[nonatbib,5p,a4paper]{elsarticle}
+\usepackage[english,norsk,nynorsk]{babel}
+\usepackage[DatePublished]{Code/NTNU-lab}
+\usepackage{csquotes}
+\input{Code/preamble}
+
+\addbibresource{Bibliography/Sources.bib}
+
+\begin{document}
+\selectlanguage{english}
+
+\input{Text/0-frontmatter}
+\input{Text/1-Introduction}
+\input{Text/0.1-Big_Figures}
+\input{Text/2-Theory}
+\input{Text/3-Method}
+\input{Text/4-Results}
+\input{Text/5-Discussion}
+\input{Text/6-Conclusion}
+
+\clearpage                              % Page limit: body ends here.
+\printbibliography
+
+\clearpage                              % Appendix starts on its own page.
+\input{Text/Appendix}
+
+\end{document}
+
+% Template: NTNU Laboratory Report in Physics, Vebjorn S. Forde, CC BY 4.0.

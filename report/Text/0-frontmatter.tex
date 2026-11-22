@@ -1,0 +1,30 @@
+\begin{frontmatter}
+%
+% Title:
+%------------------------------------
+\title{%
+Molecular Property Prediction with Graph Neural Networks\tnoteref{repo}\\
+\small ENG 2440 Medical Imaging and AI in Healthcare --- Blood--Brain Barrier Penetration on BBBP
+}
+\tnotetext[repo]{Code, the fully executed notebook with outputs, \texttt{README.md} and \texttt{requirements.txt}: \url{https://github.com/IMRUNya/bbbp-gnn}}
+%
+% Authors:
+%------------------------------------
+\author[mbzuai]{I. Turganov}
+\address[mbzuai]{Mohamed bin Zayed University of Artificial Intelligence, Abu Dhabi, United Arab Emirates.}
+%
+% Date:
+%------------------------------------
+\newdate{dateName}{22}{11}{2026}
+\renewcommand*{\today}{\DayMonthYearDateFormat\displaydate{dateName}}
+%
+% Abstract:
+%------------------------------------
+\NameOfAbstract{Abstract}
+\begin{abstract}
+
+Blood--brain barrier penetration was predicted for the 2039 molecules of the MoleculeNet BBBP dataset, comparing a learned graph representation against a fixed substructure fingerprint under two splitting protocols. An edge-aware graph isomorphism network (three \texttt{GINEConv} layers, 67\,588 parameters) and a logistic regression on 2048-bit ECFP4 fingerprints were trained on 1965 deduplicated molecules split 70:15:15 at random and by Bemis--Murcko scaffold, with three seeds each. On the scaffold split the network reached a test ROC-AUC of $0.885 \pm 0.025$ against the baseline's $0.876$; on the random split, $0.912 \pm 0.008$ against $0.892$. The baseline obtained higher accuracy and $F_1$ on both splits because the network ranks well but calibrates poorly. The split strategy shifted validation ROC-AUC by $0.0354$, about seven times the largest seed spread, and the random split's subsets shared 238 scaffolds against zero for the scaffold split. The scaffold-split difference between the two models is smaller than the seed standard deviation, so they are statistically indistinguishable there.
+
+\end{abstract}
+%
+\end{frontmatter}

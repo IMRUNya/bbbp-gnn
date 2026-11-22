@@ -1,0 +1,38 @@
+\section{Theory}
+\label{sec:theory}
+
+\subsection{Molecules as graphs}
+
+A molecule is a graph $G=(V,E)$ of heavy atoms and covalent bonds, hydrogens being an atom attribute rather than nodes. Each node carries $9$ attributes and each edge $3$, stacked into $X \in \mathbb{Z}^{|V| \times 9}$ and $A \in \mathbb{Z}^{|E| \times 3}$, and connectivity is stored in coordinate (COO) form with every bond appearing twice so that messages travel both ways, so $|E| = 2 \cdot \#\text{bonds}$.
+
+All twelve attributes are \emph{categorical codes} --- indices into a lookup table, not quantities. A formal-charge code of $5$ denotes charge $0$, because the table runs from $-5$, and consuming it as a number would assert that SP2 is three times the unspecified hybridisation. Each attribute $c$ with vocabulary $\mathcal{V}_c$ is therefore embedded by a trainable table $W_c \in \mathbb{R}^{|\mathcal{V}_c| \times d}$ and the per-column lookups summed,
+\begin{equation}
+    h_i^{(0)} = \sum_{c=1}^{9} W_c\!\left[X_{ic}\right], \qquad h_i^{(0)} \in \mathbb{R}^{d},
+    \label{eq:atom-encoder}
+\end{equation}
+with the same construction for bonds: the dense equivalent of one-hot encoding followed by a linear layer, of input width $d$ rather than the summed vocabulary size.
+
+\subsection{Message passing}
+
+The graph isomorphism network (GIN) updates every atom state from its neighbourhood \parencite{MPNN} with a sum aggregator and a multilayer perceptron, making it as discriminative as the Weisfeiler--Lehman test \parencite{GIN}; its edge-aware variant adds the bond embedding to the neighbour state inside the message \parencite{GINE}:
+\begin{equation}
+    \begin{split}
+        h_i^{(k+1)} = \mathrm{MLP}^{(k)}\Big( &(1+\varepsilon^{(k)})\, h_i^{(k)} \\
+        &+ \sum_{j \in \mathcal{N}(i)} \mathrm{ReLU}\big(h_j^{(k)} + e_{ji}\big) \Big),
+    \end{split}
+    \label{eq:gine}
+\end{equation}
+where $e_{ji}$ embeds the bond between $j$ and $i$ and $\varepsilon^{(k)}$ is learnable. The bond therefore participates in every round of propagation, which separates an aromatic ring from an aliphatic one of identical connectivity. After $K$ rounds each atom has a receptive field of $K$ bonds, and mean pooling gives a graph vector
+\begin{equation}
+    h_G = \frac{1}{|V|} \sum_{i \in V} h_i^{(K)},
+    \label{eq:pool}
+\end{equation}
+which a small head maps to one logit. \Cref{eq:pool} is permutation invariant but normalises by molecule size, so a small molecule's embedding is dominated by its few atoms. Graphs are batched by concatenation, each graph's COO indices shifted by the running atom count, so no edge joins two molecules.
+
+\subsection{Fingerprints, scaffolds and metrics}
+
+A Morgan or extended-connectivity fingerprint \parencite{ECFP} enumerates, for each atom, the circular substructure within a given bond radius, hashes it and sets the corresponding bit of a folded vector of length $L$; radius $2$ with $L = 2048$ (ECFP4) is the standard default for drug-like molecules. It sees local substructures only, carries no information about their relative arrangement and cannot adapt, which makes it the right control: it tests whether a learned representation buys anything beyond substructure presence. Similarity is the Tanimoto coefficient $T(A,B) = |A \cap B| / |A \cup B|$, for which $T \geq 0.7$ is the customary threshold for structural similarity.
+
+The Bemis--Murcko scaffold is obtained by deleting side chains and keeping the ring systems with their linkers \parencite{Bemis}. Molecules sharing one are analogues, near-duplicates in feature space without being duplicate structures, so a scaffold split keeps every molecule of a scaffold in a single subset and no test scaffold has been seen in training; acyclic molecules have an empty scaffold and need an explicit rule.
+
+ROC-AUC and the area under the precision--recall curve (PR-AUC) are threshold-free, whereas accuracy, sensitivity, specificity and $F_1$ need an operating point; on an imbalanced problem the default $0.5$ is arbitrary, so the threshold maximises Youden's index $J = \text{sensitivity} + \text{specificity} - 1$ \parencite{Youden}. Imbalance during fitting is handled by weighting class $k$ by $w_k = n / 2n_k$, counted on the training subset only.

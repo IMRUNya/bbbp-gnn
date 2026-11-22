@@ -1,0 +1,7 @@
+\section{Conclusion}
+
+BBBP loads as 2039 valid graphs at 76.5\,\% positive. Canonicalisation exposes 60 duplicated molecules invisible to raw-string comparison, ten of them carrying both labels; removing those leaves 1965 unique molecules.
+
+An edge-aware graph isomorphism network reached a test ROC-AUC of $0.912 \pm 0.008$ on a random split and $0.885 \pm 0.025$ on a scaffold split, against 0.892 and 0.876 for logistic regression on ECFP4 fingerprints. The baseline obtained the higher accuracy and $F_1$ on both, because the network ranks well but calibrates badly, and on the scaffold split the 0.009 difference in ROC-AUC is smaller than the network's own seed standard deviation of 0.025, so the two are indistinguishable there. The splitting protocol mattered far more than the model or the seed, moving validation ROC-AUC by 0.0354 --- about seven times the largest seed spread --- so the scaffold figures are the ones that describe an unseen chemotype.
+
+The most confident errors all came from regions at or below the median nearest-neighbour similarity of 0.40, three of four inheriting their neighbour's label with no warning from the predicted probability. With the label noise in the file, these results support only the claim that the model reproduces this dataset's labelling.

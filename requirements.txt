@@ -1,0 +1,11 @@
+# Versions this notebook was executed with (Python 3.11.5, macOS, CPU).
+torch==2.14.0
+torch-geometric==2.8.1
+rdkit==2026.09.1
+scikit-learn==1.7.2
+numpy==2.4.6
+pandas==2.3.3
+matplotlib==3.10.8
+
+# Needed only to open and run the notebook itself:
+jupyterlab

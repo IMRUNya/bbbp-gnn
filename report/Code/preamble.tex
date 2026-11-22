@@ -1,0 +1,51 @@
+% Use this file to write code that you do not want in the .sty file, but has to be in the preamble (before \begin{document}).
+% Writing in this file in stead of in the preamble will keep the main file more organised and tidy.
+
+
+%                       Nomenclatures
+%_______________________________________________________________
+\usepackage[intoc]{nomencl}
+\makenomenclature
+
+\renewcommand{\nomname}{%
+% Title
+%----------------
+List of Symbols
+%----------------
+}
+\renewcommand{\nompreamble}{%
+% Description
+%----------------
+The next list describes several symbols that will be later used within the body of the document
+%----------------
+}
+% This code creates the groups
+\renewcommand\nomgroup[1]{%
+  \item[\bfseries
+  \ifstrequal{#1}{A}{Physics constants}{%
+  \ifstrequal{#1}{B}{Mathematical constants}{%
+  \ifstrequal{#1}{C}{Other symbols}{}}}%
+]}
+% This will add the units
+\newcommand{\nomunit}[1]{%
+\renewcommand{\nomentryend}{\\#1}}
+%................................................................
+
+
+
+%                       Additions for this report
+%_______________________________________________________________
+\usepackage{multirow}   % Vertically merged table cells.
+%................................................................
+\usepackage{seqsplit}                   % Break long SMILES strings anywhere.
+\setlength{\emergencystretch}{3em}      % Last-resort stretch in narrow columns.
+\newcommand{\smiles}[1]{\texttt{\seqsplit{#1}}}
+%................................................................
+
+% Tighter float separation: the defaults leave a lot of air around floats
+% in a two-column layout, and the report has a hard page budget.
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{9pt plus 2pt minus 2pt}
+\setlength{\intextsep}{9pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\dblfloatsep}{9pt plus 2pt minus 2pt}

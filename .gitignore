@@ -1,0 +1,17 @@
+data/
+*.bak
+report/main.aux
+report/main.bbl
+report/main.blg
+report/main.bcf
+report/main.log
+report/main.out
+report/main.run.xml
+report/main-blx.bib
+report/main.nlo
+report/main.spl
+report/main.xdv
+report/_minted-main/
+.DS_Store
+.ipynb_checkpoints/
+report-overleaf.zip
